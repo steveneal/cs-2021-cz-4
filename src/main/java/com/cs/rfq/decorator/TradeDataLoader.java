@@ -17,14 +17,51 @@ public class TradeDataLoader {
 
     private final static Logger log = LoggerFactory.getLogger(TradeDataLoader.class);
 
-    public Dataset<Row> loadTrades(SparkSession session, String path) {
+    public static void main(String[] args) {
+        System.setProperty("hadoop.home.dir", "C:\\Java\\hadoop-2.9.2");
+        System.setProperty("spark.master", "local");
+
+        SparkSession session = SparkSession.builder()
+                .appName("Dataset with SQL")
+                .getOrCreate();
         //TODO: create an explicit schema for the trade data in the JSON files
-        StructType schema = null;
+        Dataset<Row> trades_df = loadTrades(session, "src/test/resources/trades/trades.json");
+
+        trades_df.createOrReplaceTempView("trades");
+        session.sql("select distinct LastQty from trades limit 10").show();
+
+    }
+
+    public static Dataset<Row> loadTrades(SparkSession session, String path) {
+        //TODO: create an explicit schema for the trade data in the JSON files
+        System.out.println("Invoking trader loader method");
+        StructType schema =
+                new StructType(new StructField[] {
+                        new StructField("TraderId", IntegerType, false, Metadata.empty()),
+                        new StructField("EntityId", IntegerType, false, Metadata.empty()),
+                        new StructField("MsgType", IntegerType, false, Metadata.empty()),
+                        new StructField("TradeReportId", IntegerType, false, Metadata.empty()),
+                        new StructField("PreviouslyReported", StringType, false, Metadata.empty()),
+                        new StructField("SecurityID", StringType, false, Metadata.empty()),
+                        new StructField("SecurityIdSource", IntegerType, false, Metadata.empty()),
+                        new StructField("LastQty", IntegerType, false, Metadata.empty()),
+                        new StructField("LastPx", IntegerType, false, Metadata.empty()),
+                        new StructField("TradeDate", StringType, false, Metadata.empty()),
+                        new StructField("TransactTime", StringType, false, Metadata.empty()),
+                        new StructField("NoSides", IntegerType, false, Metadata.empty()),
+                        new StructField("Side", IntegerType, false, Metadata.empty()),
+                        new StructField("OrderID", IntegerType, false, Metadata.empty()),
+                        new StructField("Currency", StringType, false, Metadata.empty())
+                });
 
         //TODO: load the trades datasetsss
-        Dataset<Row> trades = null;
+        Dataset<Row> trades = session.read().schema(schema).json(path);
 
         //TODO: log a message indicating number of records loaded and the schema used
+
+        trades.printSchema();
+        trades.createOrReplaceTempView("trades");
+        session.sql("SELECT COUNT(*) FROM trades").show();
 
         return trades;
     }
