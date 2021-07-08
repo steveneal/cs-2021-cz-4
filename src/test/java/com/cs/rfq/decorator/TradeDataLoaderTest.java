@@ -16,7 +16,7 @@ public class TradeDataLoaderTest extends AbstractSparkUnitTest {
     public void loadTradeRecords() {
         String filePath = getClass().getResource("loader-test-trades.json").getPath();
 
-        Dataset<Row> trades = new TradeDataLoader().loadTrades(session, filePath);
+        Dataset<Row> trades = new TradeDataLoader().loadTrades(session, null);
 
         assertEquals(5, trades.count());
 
