@@ -14,7 +14,7 @@ public class RfqServer extends Thread
         System.setProperty("spark.master", "local[4]");
 
         SparkConf conf = new SparkConf().setAppName("StreamFromSocket");
-        JavaStreamingContext jssc = new JavaStreamingContext(conf, Durations.seconds(5));
+        JavaStreamingContext jssc = new JavaStreamingContext(conf, Durations.milliseconds(100));
 
         JavaDStream<String> lines = jssc.socketTextStream("localhost", 9000);
         JavaDStream<String> words = lines.flatMap(x -> Arrays.asList(x.split(" ")).iterator());

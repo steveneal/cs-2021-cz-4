@@ -9,16 +9,15 @@ import com.cs.rfq.decorator.publishers.MetadataPublisher;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
+import org.apache.spark.SparkConf;
+import org.apache.spark.streaming.Durations;
 import org.apache.spark.streaming.api.java.JavaDStream;
 import org.apache.spark.streaming.api.java.JavaStreamingContext;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.apache.spark.sql.functions.sum;
 
@@ -46,23 +45,40 @@ public class RfqProcessor {
         extractors.add(new TotalTradesWithEntityExtractor());
         extractors.add(new VolumeTradedWithEntityYTDExtractor());
     }
-
-    public void startSocketListener() throws InterruptedException {
+    public static void main(String[] args) throws Exception {
+        startSocketListener();
+    }
+    public static void startSocketListener() throws InterruptedException {
         //TODO: stream data from the input socket on localhost:9000
+        System.setProperty("hadoop.home.dir", "C:\\Java\\hadoop-2.9.2");
+        System.setProperty("spark.master", "local[4]");
+
+        SparkConf conf = new SparkConf().setAppName("StreamFromSocket");
+        JavaStreamingContext jssc = new JavaStreamingContext(conf, Durations.milliseconds(100));
+
+        JavaDStream<String> lines = jssc.socketTextStream("localhost", 9000);
+        //JavaDStream<String> words = lines.flatMap(x -> Arrays.asList(x.split(" ")).iterator());
 
         //TODO: convert each incoming line to a Rfq object and call processRfq method with it
+        lines.foreachRDD(rdd -> {
+            rdd.collect().forEach(line -> processRfq(Rfq.fromJson(line.toString())));
+        });
+
 
         //TODO: start the streaming context
+        jssc.start();
+        jssc.awaitTermination();
     }
 
-    public void processRfq(Rfq rfq) {
+    public static void processRfq(Rfq rfq) {
         log.info(String.format("Received Rfq: %s", rfq.toString()));
 
         //create a blank map for the metadata to be collected
         Map<RfqMetadataFieldNames, Object> metadata = new HashMap<>();
 
         //TODO: get metadata from each of the extractors
-
+        System.out.println(rfq.getEntityId());
         //TODO: publish the metadata
+
     }
 }
