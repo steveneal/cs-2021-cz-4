@@ -26,7 +26,7 @@ public class VolumeTradedWithEntityYTDExtractorTest extends AbstractSparkUnitTes
     public void checkVolumeWhenAllTradesMatch() {
 
         String filePath = getClass().getResource("volume-traded-1.json").getPath();
-        Dataset<Row> trades = new TradeDataLoader().loadTrades(session, filePath);
+        Dataset<Row> trades = new TradeDataLoader().loadTrades(session, null);
 
         VolumeTradedWithEntityYTDExtractor extractor = new VolumeTradedWithEntityYTDExtractor();
         extractor.setSince("2018-01-01");
@@ -42,7 +42,7 @@ public class VolumeTradedWithEntityYTDExtractorTest extends AbstractSparkUnitTes
     public void checkVolumeWhenNoTradesMatch() {
 
         String filePath = getClass().getResource("volume-traded-1.json").getPath();
-        Dataset<Row> trades = new TradeDataLoader().loadTrades(session, filePath);
+        Dataset<Row> trades = new TradeDataLoader().loadTrades(session, null);
 
         //all test trade data are for 2018 so this will cause no matches
         VolumeTradedWithEntityYTDExtractor extractor = new VolumeTradedWithEntityYTDExtractor();
