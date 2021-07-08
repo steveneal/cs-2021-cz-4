@@ -21,7 +21,7 @@ public class TradeDataLoader {
         //TODO: create an explicit schema for the trade data in the JSON files
         StructType schema = null;
 
-        //TODO: load the trades dataset
+        //TODO: load the trades datasetsss
         Dataset<Row> trades = null;
 
         //TODO: log a message indicating number of records loaded and the schema used
