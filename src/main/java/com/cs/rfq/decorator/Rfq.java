@@ -2,10 +2,13 @@ package com.cs.rfq.decorator;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
 
 import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.util.Map;
+import org.json4s.jackson.Json;
+import scala.util.parsing.json.JSONObject;
 
 public class Rfq implements Serializable {
     private String id;
@@ -18,7 +21,9 @@ public class Rfq implements Serializable {
 
     public static Rfq fromJson(String json) {
         //TODO: build a new RFQ setting all fields from data passed in the RFQ json message
-        return null;
+        Gson g = new Gson();
+        Rfq output =  g.fromJson(json, Rfq.class);
+        return output;
     }
 
     @Override
