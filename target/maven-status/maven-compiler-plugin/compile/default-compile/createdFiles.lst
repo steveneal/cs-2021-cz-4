@@ -1,0 +1,12 @@
+com\cs\rfq\decorator\extractors\TotalTradesWithEntityExtractor.class
+com\cs\rfq\decorator\publishers\MetadataJsonLogPublisher.class
+com\cs\rfq\decorator\extractors\RfqMetadataFieldNames.class
+com\cs\rfq\decorator\Rfq.class
+com\cs\rfq\decorator\RfqDecoratorMain.class
+com\cs\rfq\decorator\publishers\MetadataPublisher.class
+com\cs\rfq\decorator\extractors\VolumeTradedWithEntityYTDExtractor.class
+com\cs\rfq\decorator\RfqProcessor.class
+com\cs\rfq\decorator\TradeDataLoader.class
+com\cs\rfq\decorator\extractors\RfqMetadataExtractor.class
+com\cs\rfq\utils\ChatterboxServer.class
+com\cs\rfq\utils\RfqServer.class

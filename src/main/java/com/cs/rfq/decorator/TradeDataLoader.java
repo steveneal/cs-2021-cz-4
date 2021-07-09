@@ -28,16 +28,20 @@ public class TradeDataLoader {
         Dataset<Row> trades_df = loadTrades(session, "src/test/resources/trades/trades.json");
 
         trades_df.createOrReplaceTempView("trades");
-        session.sql("select distinct LastQty from trades limit 10").show();
 
     }
 
     public static Dataset<Row> loadTrades(SparkSession session, String path) {
         //TODO: create an explicit schema for the trade data in the JSON files
-        System.out.println("Invoking trader loader method");
+           /*
+        Adrian Althaus, 9.7.21:
+        Schema can be deleted. The line
+           Dataset<Row> trades = session.read().schema(schema).json(path);
+        leads to datasets full of null values.
+
         StructType schema =
                 new StructType(new StructField[] {
-                        new StructField("TraderId", IntegerType, false, Metadata.empty()),
+                        new StructField("TraderId", IntegerType, false, Metadata.empty() ),
                         new StructField("EntityId", IntegerType, false, Metadata.empty()),
                         new StructField("MsgType", IntegerType, false, Metadata.empty()),
                         new StructField("TradeReportId", IntegerType, false, Metadata.empty()),
@@ -53,15 +57,11 @@ public class TradeDataLoader {
                         new StructField("OrderID", IntegerType, false, Metadata.empty()),
                         new StructField("Currency", StringType, false, Metadata.empty())
                 });
+        */
 
         //TODO: load the trades datasetsss
-        Dataset<Row> trades = session.read().schema(schema).json(path);
-
+        Dataset<Row> trades = session.read().json(path);
         //TODO: log a message indicating number of records loaded and the schema used
-
-        trades.createOrReplaceTempView("trades");
-        session.sql("SELECT COUNT(*) FROM trades").show();
-
 
         return trades;
     }

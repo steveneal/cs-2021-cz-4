@@ -1,0 +1,12 @@
+C:\exercises\cs-2021-cz-4\src\main\java\com\cs\rfq\decorator\extractors\RfqMetadataExtractor.java
+C:\exercises\cs-2021-cz-4\src\main\java\com\cs\rfq\decorator\Rfq.java
+C:\exercises\cs-2021-cz-4\src\main\java\com\cs\rfq\decorator\RfqDecoratorMain.java
+C:\exercises\cs-2021-cz-4\src\main\java\com\cs\rfq\decorator\TradeDataLoader.java
+C:\exercises\cs-2021-cz-4\src\main\java\com\cs\rfq\decorator\extractors\VolumeTradedWithEntityYTDExtractor.java
+C:\exercises\cs-2021-cz-4\src\main\java\com\cs\rfq\decorator\publishers\MetadataPublisher.java
+C:\exercises\cs-2021-cz-4\src\main\java\com\cs\rfq\decorator\extractors\RfqMetadataFieldNames.java
+C:\exercises\cs-2021-cz-4\src\main\java\com\cs\rfq\decorator\publishers\MetadataJsonLogPublisher.java
+C:\exercises\cs-2021-cz-4\src\main\java\com\cs\rfq\decorator\RfqProcessor.java
+C:\exercises\cs-2021-cz-4\src\main\java\com\cs\rfq\utils\ChatterboxServer.java
+C:\exercises\cs-2021-cz-4\src\main\java\com\cs\rfq\utils\RfqServer.java
+C:\exercises\cs-2021-cz-4\src\main\java\com\cs\rfq\decorator\extractors\TotalTradesWithEntityExtractor.java

@@ -1,32 +1,20 @@
 package com.cs.rfq.decorator;
 
-import com.cs.rfq.decorator.extractors.RfqMetadataExtractor;
-import com.cs.rfq.decorator.extractors.RfqMetadataFieldNames;
-import com.cs.rfq.decorator.extractors.TotalTradesWithEntityExtractor;
-import com.cs.rfq.decorator.extractors.VolumeTradedWithEntityYTDExtractor;
+import com.cs.rfq.decorator.extractors.*;
 import com.cs.rfq.decorator.publishers.MetadataJsonLogPublisher;
 import com.cs.rfq.decorator.publishers.MetadataPublisher;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
-import org.apache.spark.SparkConf;
-import org.apache.spark.streaming.Durations;
-import org.apache.spark.streaming.api.java.JavaDStream;
 import org.apache.spark.streaming.api.java.JavaStreamingContext;
-import org.joda.time.DateTime;
-import org.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.google.common.io.Resources;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.errors.WakeupException;
 import org.apache.kafka.common.serialization.StringDeserializer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.json.JSONObject;
 
 import java.io.FileWriter;
@@ -38,7 +26,6 @@ import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
 
 import java.util.*;
-import java.util.concurrent.CountDownLatch;
 
 import static org.apache.spark.sql.functions.sum;
 
@@ -71,6 +58,8 @@ public class RfqProcessor {
         //TODO: take a close look at how these two extractors are implemented
         extractors.add(new TotalTradesWithEntityExtractor());
         extractors.add(new VolumeTradedWithEntityYTDExtractor());
+        extractors.add(new TotalVolumeTradedForInstrumentExtractor());
+
         Consumer rfqKafkaReceiver = new Consumer(server, groupId, topic);
         rfqKafkaReceiver.execute(sessions,trades_df);
         //startSocketListener(sessions, streamingContext, trades_df);
@@ -104,17 +93,16 @@ public class RfqProcessor {
         //create a blank map for the metadata to be collected
         Map<RfqMetadataFieldNames, Object> metadata = new HashMap<>();
         //String liquidty = metadata.lookupLiquidity(rfq.getIsin());
-        //metadata.put(RfqMetadataFieldNames.liquidity, liquidty);
+        //metadata.put(RfqMetadataFieldNames.instrumentLiquidity, liquidty);
 
         //TODO: get metadata from each of the extractors
         VolumeTradedWithEntityYTDExtractor extractor = new VolumeTradedWithEntityYTDExtractor();
-
+        TotalVolumeTradedForInstrumentExtractor volumeTradedForInstrumentExtractor = new TotalVolumeTradedForInstrumentExtractor();
         Map<RfqMetadataFieldNames, Object> meta = extractor.extractMetaData(rfq, sessions, trades_df);
-
-        Object result = meta.get(RfqMetadataFieldNames.volumeTradedYearToDate);
-        System.out.println(result);
+        Map<RfqMetadataFieldNames, Object> volumeTradedForInstrumentExtractorMeta = volumeTradedForInstrumentExtractor.extractMetaData(rfq, sessions, trades_df);
+        Long volume = (Long) volumeTradedForInstrumentExtractorMeta.get(RfqMetadataFieldNames.totalVolumeTradedForInstrument);
+        metadata.put(RfqMetadataFieldNames.totalVolumeTradedForInstrument, volume);
         //TODO: publish the metadata
-
     }
 
 
@@ -181,7 +169,6 @@ public class RfqProcessor {
                 mConsumer = new KafkaConsumer<>(props);
                 mConsumer.subscribe(Collections.singletonList(topic));
             }
-
 
             private Properties consumerProps(String bootstrapServer, String groupId) {
                 String deserializer = StringDeserializer.class.getName();

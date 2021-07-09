@@ -24,10 +24,8 @@ public class Producer {
     public static void main(String[] args) throws ExecutionException, InterruptedException {
         String server = "127.0.0.1:9092";
         String topic = "topicName";
-
         String rfq1 = rfqGenerator("rfq3","7514623710987345033","AT0000383864",3351266293154445953L,5561279226039690843L,250000L,1.58,"B");
         String rfq2 = rfqGenerator("rfq4","7514623710987345250","AT0000383250",33512662931544L,5561279226039L,650000L,2.63,"A");
-
         Producer producer = new Producer(server);
         producer.put(topic, "rfq3", rfq1);
         producer.put(topic, "rfq4", rfq2);

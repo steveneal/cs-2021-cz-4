@@ -1,5 +1,7 @@
 package com.cs.rfq.decorator;
 
+import org.apache.spark.sql.SparkSession;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -25,9 +27,23 @@ public class RfqMetadata {
         return lastPrice;
     }
 
+    public static void getVolume(String traderId){
+        /*
+        TradeDataLoader tradeDataLoader = new TradeDataLoader();
+        SparkSession sparkSession = tradeDataLoader.getSession();
+
+
+        tring query = String.format("SELECT sum(LastQty) from trade where EntityId='%s' AND SecurityId='%s' AND TradeDate >= '%s'",
+                rfq.getEntityId(),
+
+        String sqlQuery = String.format("select sum(lastQty) from trades where TraderId = '%s'", traderId);
+        sparkSession.sql(sqlQuery).show();
+        */
+    }
+
     private static Map processInstrumentData(){
         // create a reader
-        Map<String, String> instrumentMap = new HashMap();
+        Map<String, String> map = new HashMap();
         try (BufferedReader br = Files.newBufferedReader(Paths.get("src/test/resources/trades/instrument-static.csv"))) {
 
             // CSV file delimiter
@@ -40,13 +56,12 @@ public class RfqMetadata {
                 // print all columns
                 String instrumentId = columns[0];
                 String priceLast = columns[9];
-                instrumentMap.put(instrumentId, priceLast);
+                map.put(instrumentId, priceLast);
             }
 
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-        System.out.println("DICT LENGHT: "+instrumentMap.size());
-        return instrumentMap;
+        return map;
     }
 }
