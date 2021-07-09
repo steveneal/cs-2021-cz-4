@@ -59,9 +59,9 @@ public class TradeDataLoader {
 
         //TODO: log a message indicating number of records loaded and the schema used
 
-        trades.printSchema();
         trades.createOrReplaceTempView("trades");
         session.sql("SELECT COUNT(*) FROM trades").show();
+
 
         return trades;
     }

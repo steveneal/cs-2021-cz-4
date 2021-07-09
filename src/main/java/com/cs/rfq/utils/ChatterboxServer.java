@@ -3,7 +3,9 @@ package com.cs.rfq.utils;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-
+import java.nio.file.Paths;
+import java.util.Date;
+import java.text.SimpleDateFormat;
 /**
  * Simple chat server capable of sending and receiving String lines on separate in/out port numbers.
  */
@@ -80,6 +82,14 @@ public class ChatterboxServer {
                     //naive polling of System.in to check for input and allow thread to be interrupted
                     if (System.in.available() > 0) {
                         String line = in.readLine();
+                        String fileName = "src/main/java/com/cs/rfq/utils/archive.txt";
+                        Date date = new Date();
+                        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+                        String dateinput = formatter.format(date);
+                        BufferedWriter writer = new BufferedWriter(new FileWriter(fileName, true));
+                        writer.append(dateinput + " " + line);
+                        writer.newLine();
+                        writer.close();
                         out.println(line);
                         out.flush();
                         log("sent", line);

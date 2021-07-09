@@ -12,7 +12,7 @@ import scala.util.parsing.json.JSONObject;
 
 public class Rfq implements Serializable {
     private String id;
-    private String isin;
+    private String instrumentId;
     private Long traderId;
     private Long entityId;
     private Long quantity;
@@ -31,7 +31,7 @@ public class Rfq implements Serializable {
     public String toString() {
         return "Rfq{" +
                 "id='" + id + '\'' +
-                ", isin='" + isin + '\'' +
+                ", isin='" + instrumentId + '\'' +
                 ", traderId=" + traderId +
                 ", entityId=" + entityId +
                 ", quantity=" + quantity +
@@ -57,11 +57,11 @@ public class Rfq implements Serializable {
     }
 
     public String getIsin() {
-        return isin;
+        return instrumentId;
     }
 
-    public void setIsin(String isin) {
-        this.isin = isin;
+    public void setIsin(String instrumentId) {
+        this.instrumentId = instrumentId;
     }
 
     public Long getTraderId() {
