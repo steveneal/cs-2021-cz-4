@@ -35,6 +35,9 @@ public class RfqProcessor {
 
     private final MetadataPublisher publisher = new MetadataJsonLogPublisher();
 
+    private  Map instrumentMap;
+
+
     public RfqProcessor(SparkSession session, JavaStreamingContext streamingContext) {
         this.session = session;
         this.streamingContext = streamingContext;
@@ -46,6 +49,7 @@ public class RfqProcessor {
         extractors.add(new VolumeTradedWithEntityYTDExtractor());
     }
     public static void main(String[] args) throws Exception {
+
         startSocketListener();
     }
     public static void startSocketListener() throws InterruptedException {
@@ -75,6 +79,8 @@ public class RfqProcessor {
 
         //create a blank map for the metadata to be collected
         Map<RfqMetadataFieldNames, Object> metadata = new HashMap<>();
+        //String liquidty = metadata.lookupLiquidity(rfq.getIsin());
+        //metadata.put(RfqMetadataFieldNames.liquidity, liquidty);
 
         //TODO: get metadata from each of the extractors
         System.out.println(rfq.getEntityId());
