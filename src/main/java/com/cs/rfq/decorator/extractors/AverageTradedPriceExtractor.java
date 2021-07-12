@@ -9,31 +9,34 @@ import org.joda.time.DateTime;
 import java.util.HashMap;
 import java.util.Map;
 
-public class VolumeTradedWithEntityYTDExtractor implements RfqMetadataExtractor {
+public class AverageTradedPriceExtractor implements RfqMetadataExtractor {
 
-    private String since;
+    private java.sql.Date since;
 
-    public VolumeTradedWithEntityYTDExtractor() {
-        this.since = DateTime.now().getYear() + "-01-01";
+    public AverageTradedPriceExtractor() {
+        this.since = new java.sql.Date(new DateTime().minusMonths(1).getMillis());
     }
 
     @Override
     public Map<RfqMetadataFieldNames, Object> extractMetaData(Rfq rfq, SparkSession session, Dataset<Row> trades) {
-        String query = String.format("SELECT SUM(LastQty) from trade where EntityId='%s' AND SecurityId='%s' AND TradeDate >= '%s'",
-            rfq.getEntityId(),
-            rfq.getIsin(),
-            since);
+
         trades.createOrReplaceTempView("trade");
+        String query = String.format("SELECT AVG(LastPx) from trade where SecurityID='%s' AND TradeDate >= '%s'",
+                rfq.getIsin(), since);
+
         Dataset<Row> sqlQueryResults = session.sql(query);
+
         Object volume = sqlQueryResults.first().get(0);
         if (volume == null) {
             volume = 0L;
         }
         Map<RfqMetadataFieldNames, Object> results = new HashMap<>();
-        results.put(RfqMetadataFieldNames.volumeTradedYearToDate, volume);
+        results.put(RfqMetadataFieldNames.averageTradedPrice, volume);
+
         return results;
     }
-    protected void setSince(String since) {
+
+    protected void setSince(java.sql.Date since) {
         this.since = since;
     }
 }

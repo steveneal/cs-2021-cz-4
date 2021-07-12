@@ -22,8 +22,8 @@ public class InstrumentLiquidityExtractor implements RfqMetadataExtractor {
     public Map<RfqMetadataFieldNames, Object> extractMetaData(Rfq rfq, SparkSession session, Dataset<Row> trades) {
 
         trades.createOrReplaceTempView("trade");
-        String query = String.format("SELECT sum(LastQty) from trade where TraderId='%s' And SecurityID='%s' AND TradeDate >= '%s'",
-                rfq.getTraderId(), rfq.getIsin() ,since);
+        String query = String.format("SELECT sum(LastQty) from trade where SecurityID='%s' AND TradeDate >= '%s'",
+                rfq.getIsin() ,since);
 
         Dataset<Row> sqlQueryResults = session.sql(query);
 

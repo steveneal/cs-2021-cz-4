@@ -52,7 +52,7 @@ public class RfqProcessorTest {
         testMessage.setTraderId(3351266293154445953L);
         TotalVolumeTradedForInstrumentExtractor volumeTradedForInstrumentExtractor = new TotalVolumeTradedForInstrumentExtractor();
         Map<RfqMetadataFieldNames, Object> volumeTradedForInstrumentExtractorMeta = volumeTradedForInstrumentExtractor.extractMetaData(testMessage, session, trades_df);
-        Long volume = (Long) volumeTradedForInstrumentExtractorMeta.get(RfqMetadataFieldNames.totalVolumeTradedForInstrument);
+        Long volume = (Long) volumeTradedForInstrumentExtractorMeta.get(RfqMetadataFieldNames.totalVolumeTradedForInstrumentPastYear);
         assertEquals((Long) volume,(Long) 20300000L);
     }
 

@@ -24,8 +24,8 @@ public class Producer {
     public static void main(String[] args) throws ExecutionException, InterruptedException {
         String server = "127.0.0.1:9092";
         String topic = "topicName";
-        String rfq1 = rfqGenerator("rfq3","7514623710987345033","AT0000383864",3351266293154445953L,5561279226039690843L,250000L,1.58,"B");
-        String rfq2 = rfqGenerator("rfq4","7514623710987345250","AT0000383250",33512662931544L,5561279226039L,650000L,2.63,"A");
+        String rfq1 = rfqGenerator("rfq3","7514623710987345033","AT0000A0VRF9",5561302304887460215L,5561279226039690843L,250000L,1.58,"B");
+        String rfq2 = rfqGenerator("rfq4","7514623710987345250","AT0000386115",5561302304887460215L,5561279226039690843L,650000L,2.63,"A");
         Producer producer = new Producer(server);
         producer.put(topic, "rfq3", rfq1);
         producer.put(topic, "rfq4", rfq2);
@@ -37,7 +37,7 @@ public class Producer {
     private static String rfqGenerator(String key, String id, String isin, Long traderId, Long entityId, Long quantity, Double price, String side){
         return "{key:"+key+", value:{" +
                 "id:'" + id + '\'' +
-                ", isin:'" + isin + '\'' +
+                ", instrumentId:'" + isin + '\'' +
                 ", traderId:" + traderId +
                 ", entityId:" + entityId +
                 ", quantity:" + quantity +

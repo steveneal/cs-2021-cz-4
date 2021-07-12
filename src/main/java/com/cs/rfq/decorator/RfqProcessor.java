@@ -56,8 +56,7 @@ public class RfqProcessor {
         TradeDataLoader trades = new TradeDataLoader();
         Dataset <Row> trades_df = trades.loadTrades(sessions, "src/test/resources/trades/trades.json");
         //TODO: take a close look at how these two extractors are implemented
-        extractors.add(new TotalTradesWithEntityExtractor());
-        extractors.add(new VolumeTradedWithEntityYTDExtractor());
+        extractors.add(new TotalVolumeTradedByEntityExtractor());
         extractors.add(new TotalVolumeTradedForInstrumentExtractor());
 
         Consumer rfqKafkaReceiver = new Consumer(server, groupId, topic);
@@ -97,20 +96,53 @@ public class RfqProcessor {
 
         //TODO: get metadata from each of the extractors
         // Extractors
-        VolumeTradedWithEntityYTDExtractor extractor = new VolumeTradedWithEntityYTDExtractor();
+        TotalVolumeTradedByEntityExtractor volumeTradedByEntityExtractor = new TotalVolumeTradedByEntityExtractor();
         TotalVolumeTradedForInstrumentExtractor volumeTradedForInstrumentExtractor = new TotalVolumeTradedForInstrumentExtractor();
         InstrumentLiquidityExtractor instrumentLiquidityExtractor = new InstrumentLiquidityExtractor();
+        TradeSideBiasExtractor tradeSideBiasExtractor = new TradeSideBiasExtractor();
+        AverageTradedPriceExtractor averageTradedPriceExtractor = new AverageTradedPriceExtractor();
         //Map object
-        Map<RfqMetadataFieldNames, Object> meta = extractor.extractMetaData(rfq, sessions, trades_df);
+        Map<RfqMetadataFieldNames, Object> volumeTradedByEntityExtractorMeta = volumeTradedByEntityExtractor.extractMetaData(rfq, sessions, trades_df);
         Map<RfqMetadataFieldNames, Object> volumeTradedForInstrumentExtractorMeta = volumeTradedForInstrumentExtractor.extractMetaData(rfq, sessions, trades_df);
         Map<RfqMetadataFieldNames, Object> instrumentLiquiditMeta = instrumentLiquidityExtractor.extractMetaData(rfq, sessions, trades_df);
+        Map<RfqMetadataFieldNames, Object> tradeSideBiasMeta = tradeSideBiasExtractor.extractMetaData(rfq, sessions, trades_df);
+        Map<RfqMetadataFieldNames, Object> averageTradedPriceMeta = averageTradedPriceExtractor.extractMetaData(rfq, sessions, trades_df);
         // Calculating Meta data
-        Long volume = (Long) volumeTradedForInstrumentExtractorMeta.get(RfqMetadataFieldNames.totalVolumeTradedForInstrument);
+        Long totalVolumeTradedForInstrumentPastYear = (Long) volumeTradedForInstrumentExtractorMeta.get(RfqMetadataFieldNames.totalVolumeTradedForInstrumentPastYear);
+        Long totalVolumeTradedForInstrumentPastMonth = (Long) volumeTradedForInstrumentExtractorMeta.get(RfqMetadataFieldNames.totalVolumeTradedForInstrumentPastMonth);
+        Long totalVolumeTradedForInstrumentPastWeek = (Long) volumeTradedForInstrumentExtractorMeta.get(RfqMetadataFieldNames.totalVolumeTradedForInstrumentPastWeek);
+        Long totalVolumeTradedByEntityPastYear = (Long) volumeTradedByEntityExtractorMeta.get(RfqMetadataFieldNames.tradesWithEntityPastYear);
+        Long totalVolumeTradedByEntityPastMonth = (Long) volumeTradedByEntityExtractorMeta.get(RfqMetadataFieldNames.tradesWithEntityPastMonth);
+        Long totalVolumeTradedByEntityPastWeek = (Long) volumeTradedByEntityExtractorMeta.get(RfqMetadataFieldNames.tradesWithEntityPastWeek);
         Long instrumentLiqudity = (Long) instrumentLiquiditMeta.get(RfqMetadataFieldNames.instrumentLiquidity);
+        Long tradeSideBiasMonth = ((Number) tradeSideBiasMeta.get(RfqMetadataFieldNames.tradeBiasMonthToDate)).longValue();
+        Long tradeSideBiasWeek = ((Number) tradeSideBiasMeta.get(RfqMetadataFieldNames.tradeBiasWeekToDate)).longValue();
+        Long averageTradedPrice = ((Number) averageTradedPriceMeta.get(RfqMetadataFieldNames.averageTradedPrice)).longValue();
+//        System.out.println("Volume Instrument YTD " + totalVolumeTradedForInstrumentPastYear.toString());
+//        System.out.println("Volume Instrument MTD " + totalVolumeTradedForInstrumentPastMonth.toString());
+//        System.out.println("Volume Instrument WTD " + totalVolumeTradedForInstrumentPastWeek.toString());
+//        System.out.println("Volume Entity YTD " + totalVolumeTradedByEntityPastYear.toString());
+//        System.out.println("Volume Entity MTD " + totalVolumeTradedByEntityPastMonth.toString());
+//        System.out.println("Volume Entity WTD " + totalVolumeTradedByEntityPastWeek.toString());
+//        System.out.println("Average Traded Price " + averageTradedPrice.toString());
+//        System.out.println("Liquidity " + instrumentLiqudity.toString());
+//        System.out.println("MTD bias " + tradeSideBiasMonth.toString());
+//        System.out.println("WTD bias " + tradeSideBiasWeek.toString());
         // Assign meta data
-        metadata.put(RfqMetadataFieldNames.totalVolumeTradedForInstrument, volume);
+        metadata.put(RfqMetadataFieldNames.tradesWithEntityPastYear, totalVolumeTradedByEntityPastYear);
+        metadata.put(RfqMetadataFieldNames.tradesWithEntityPastMonth, totalVolumeTradedByEntityPastMonth);
+        metadata.put(RfqMetadataFieldNames.tradesWithEntityPastWeek, totalVolumeTradedByEntityPastWeek);
+        metadata.put(RfqMetadataFieldNames.totalVolumeTradedForInstrumentPastYear, totalVolumeTradedForInstrumentPastYear);
+        metadata.put(RfqMetadataFieldNames.totalVolumeTradedForInstrumentPastMonth, totalVolumeTradedForInstrumentPastMonth);
+        metadata.put(RfqMetadataFieldNames.totalVolumeTradedForInstrumentPastWeek, totalVolumeTradedForInstrumentPastWeek);
         metadata.put(RfqMetadataFieldNames.instrumentLiquidity, instrumentLiqudity);
+        metadata.put(RfqMetadataFieldNames.tradeBiasMonthToDate, tradeSideBiasMonth);
+        metadata.put(RfqMetadataFieldNames.tradeBiasWeekToDate, tradeSideBiasWeek);
+        metadata.put(RfqMetadataFieldNames.averageTradedPrice, averageTradedPrice);
 
+        for (Map.Entry<RfqMetadataFieldNames, Object> entry : metadata.entrySet()) {
+            System.out.println(entry.getKey() + ":" + entry.getValue().toString());
+        }
         //TODO: publish the metadata
     }
 
