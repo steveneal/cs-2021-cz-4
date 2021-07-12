@@ -129,6 +129,13 @@ public class RfqProcessor {
 //        System.out.println("MTD bias " + tradeSideBiasMonth.toString());
 //        System.out.println("WTD bias " + tradeSideBiasWeek.toString());
         // Assign meta data
+        metadata.put(RfqMetadataFieldNames.id, rfq.getId());
+        metadata.put(RfqMetadataFieldNames.traderId, rfq.getTraderId());
+        metadata.put(RfqMetadataFieldNames.entityId, rfq.getEntityId());
+        metadata.put(RfqMetadataFieldNames.instrumentId, rfq.getIsin());
+        metadata.put(RfqMetadataFieldNames.qty, rfq.getQuantity());
+        metadata.put(RfqMetadataFieldNames.price, rfq.getPrice());
+        metadata.put(RfqMetadataFieldNames.side, rfq.getSide());
         metadata.put(RfqMetadataFieldNames.tradesWithEntityPastYear, totalVolumeTradedByEntityPastYear);
         metadata.put(RfqMetadataFieldNames.tradesWithEntityPastMonth, totalVolumeTradedByEntityPastMonth);
         metadata.put(RfqMetadataFieldNames.tradesWithEntityPastWeek, totalVolumeTradedByEntityPastWeek);
@@ -140,10 +147,12 @@ public class RfqProcessor {
         metadata.put(RfqMetadataFieldNames.tradeBiasWeekToDate, tradeSideBiasWeek);
         metadata.put(RfqMetadataFieldNames.averageTradedPrice, averageTradedPrice);
 
-        for (Map.Entry<RfqMetadataFieldNames, Object> entry : metadata.entrySet()) {
-            System.out.println(entry.getKey() + ":" + entry.getValue().toString());
-        }
+//        for (Map.Entry<RfqMetadataFieldNames, Object> entry : metadata.entrySet()) {
+//            System.out.println(entry.getKey() + ":" + entry.getValue().toString());
+//        }
         //TODO: publish the metadata
+        MetadataJsonLogPublisher metadataJsonLogPublisher = new MetadataJsonLogPublisher();
+        metadataJsonLogPublisher.publishMetadata(metadata);
     }
 
 
