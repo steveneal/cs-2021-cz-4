@@ -96,12 +96,21 @@ public class RfqProcessor {
         //metadata.put(RfqMetadataFieldNames.instrumentLiquidity, liquidty);
 
         //TODO: get metadata from each of the extractors
+        // Extractors
         VolumeTradedWithEntityYTDExtractor extractor = new VolumeTradedWithEntityYTDExtractor();
         TotalVolumeTradedForInstrumentExtractor volumeTradedForInstrumentExtractor = new TotalVolumeTradedForInstrumentExtractor();
+        InstrumentLiquidityExtractor instrumentLiquidityExtractor = new InstrumentLiquidityExtractor();
+        //Map object
         Map<RfqMetadataFieldNames, Object> meta = extractor.extractMetaData(rfq, sessions, trades_df);
         Map<RfqMetadataFieldNames, Object> volumeTradedForInstrumentExtractorMeta = volumeTradedForInstrumentExtractor.extractMetaData(rfq, sessions, trades_df);
+        Map<RfqMetadataFieldNames, Object> instrumentLiquiditMeta = instrumentLiquidityExtractor.extractMetaData(rfq, sessions, trades_df);
+        // Calculating Meta data
         Long volume = (Long) volumeTradedForInstrumentExtractorMeta.get(RfqMetadataFieldNames.totalVolumeTradedForInstrument);
+        Long instrumentLiqudity = (Long) instrumentLiquiditMeta.get(RfqMetadataFieldNames.instrumentLiquidity);
+        // Assign meta data
         metadata.put(RfqMetadataFieldNames.totalVolumeTradedForInstrument, volume);
+        metadata.put(RfqMetadataFieldNames.instrumentLiquidity, instrumentLiqudity);
+
         //TODO: publish the metadata
     }
 
