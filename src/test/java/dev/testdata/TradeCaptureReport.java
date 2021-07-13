@@ -53,9 +53,9 @@ public class TradeCaptureReport {
         EntityId = c.entityId;
         SecurityID = i.isin;
         LastQty = 50_000 * (int) ((Math.random() * 10) + 1); // 1-10 * 50_000
-        LastPx = randomizePrice(i.price);
-        TradeDate = tradeDateFormatter.print(d);
+        LastPx = randomizePrice(i.price); TradeDate = tradeDateFormatter.print(d);
         TransactTime = transactTimeFormatter.print(d);
+
         Side = (Math.random() > 0.5) ? 1 : 2;
     }
 

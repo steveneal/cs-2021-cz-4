@@ -16,7 +16,7 @@ public class Producer {
     final KafkaProducer<String, String> mProducer;
     final Logger mLogger = LoggerFactory.getLogger(Producer.class);
 
-    Producer(String bootstrapServer){
+    public Producer(String bootstrapServer){
         Properties props = producerProps(bootstrapServer);
         mProducer = new KafkaProducer<>(props);
         mLogger.info("Producer On");

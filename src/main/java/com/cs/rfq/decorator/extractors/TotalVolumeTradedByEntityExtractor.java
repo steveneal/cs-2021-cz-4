@@ -9,13 +9,13 @@ import org.joda.time.DateTime;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TotalVolumeTradedForInstrumentExtractor implements RfqMetadataExtractor {
+public class TotalVolumeTradedByEntityExtractor implements RfqMetadataExtractor {
 
     private long since;
     private long sincemonth;
     private long sinceweek;
 
-    public TotalVolumeTradedForInstrumentExtractor() {
+    public TotalVolumeTradedByEntityExtractor() {
         this.sincemonth = new DateTime().minusMonths(1).getMillis();
         this.sinceweek = new DateTime().minusWeeks(1).getMillis();
         this.since = DateTime.now().minusYears(1).getMillis();
@@ -25,12 +25,12 @@ public class TotalVolumeTradedForInstrumentExtractor implements RfqMetadataExtra
     public Map<RfqMetadataFieldNames, Object> extractMetaData(Rfq rfq, SparkSession session, Dataset<Row> trades) {
 
         trades.createOrReplaceTempView("trade");
-        String queryYTD = String.format("SELECT sum(LastQty) from trade where TraderId='%s' AND SecurityID='%s' AND TradeDate >= '%s'",
-                rfq.getTraderId(), rfq.getIsin(), new java.sql.Date(since));
-        String queryMTD = String.format("SELECT sum(LastQty) from trade where TraderId='%s' AND SecurityID='%s' AND TradeDate >= '%s'",
-                rfq.getTraderId(), rfq.getIsin(), new java.sql.Date(sincemonth));
-        String queryWTD = String.format("SELECT sum(LastQty) from trade where TraderId='%s' AND SecurityID='%s' AND TradeDate >= '%s'",
-                rfq.getTraderId(), rfq.getIsin(), new java.sql.Date(sinceweek));
+        String queryYTD = String.format("SELECT sum(LastQty) from trade where EntityId='%s' AND SecurityID='%s' AND TradeDate >= '%s'",
+                rfq.getEntityId(), rfq.getIsin(), new java.sql.Date(since));
+        String queryMTD = String.format("SELECT sum(LastQty) from trade where EntityId='%s' AND SecurityID='%s' AND TradeDate >= '%s'",
+                rfq.getEntityId(), rfq.getIsin(), new java.sql.Date(sincemonth));
+        String queryWTD = String.format("SELECT sum(LastQty) from trade where EntityId='%s' AND SecurityID='%s' AND TradeDate >= '%s'",
+                rfq.getEntityId(), rfq.getIsin(), new java.sql.Date(sinceweek));
         Object volumeYTD = session.sql(queryYTD).first().get(0);
         Object volumeMTD = session.sql(queryMTD).first().get(0);
         Object volumeWTD = session.sql(queryWTD).first().get(0);
@@ -45,9 +45,9 @@ public class TotalVolumeTradedForInstrumentExtractor implements RfqMetadataExtra
             volumeWTD = 0L;
         }
         Map<RfqMetadataFieldNames, Object> results = new HashMap<>();
-        results.put(RfqMetadataFieldNames.totalVolumeTradedForInstrumentPastYear, volumeYTD);
-        results.put(RfqMetadataFieldNames.totalVolumeTradedForInstrumentPastMonth, volumeMTD);
-        results.put(RfqMetadataFieldNames.totalVolumeTradedForInstrumentPastWeek, volumeWTD);
+        results.put(RfqMetadataFieldNames.tradesWithEntityPastYear, volumeYTD);
+        results.put(RfqMetadataFieldNames.tradesWithEntityPastMonth, volumeMTD);
+        results.put(RfqMetadataFieldNames.tradesWithEntityPastWeek, volumeWTD);
         return results;
     }
 

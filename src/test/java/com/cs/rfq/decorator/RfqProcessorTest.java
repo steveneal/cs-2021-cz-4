@@ -29,14 +29,7 @@ public class RfqProcessorTest {
         trades_df = session.read().json("src/test/resources/trades/trades.json");
     }
 
-    @Test
-    public void checkLiquidityMetadata(){
-        RfqMetadata rfqMetadata = new RfqMetadata();
-        String liquidity = rfqMetadata.lookupLiquidity("AT0000A0U3T4");
-        String liquidityKeyErorr = rfqMetadata.lookupLiquidity("A most likely non-existing instrument");
-        assertEquals("114.44", liquidity);
-        assertEquals("-", liquidityKeyErorr);
-    }
+
 
     @Test
     public void checkMetadataTotalVolumeTradedForInstrument(){
@@ -44,7 +37,7 @@ public class RfqProcessorTest {
         testMessage.setTraderId(3351266293154445953L);
         TotalVolumeTradedForInstrumentExtractor volumeTradedForInstrumentExtractor = new TotalVolumeTradedForInstrumentExtractor();
         Map<RfqMetadataFieldNames, Object> volumeTradedForInstrumentExtractorMeta = volumeTradedForInstrumentExtractor.extractMetaData(testMessage, null, trades_df);
-        Long volume = (Long) volumeTradedForInstrumentExtractorMeta.get(RfqMetadataFieldNames.totalVolumeTradedForInstrument);
+        Long volume = (Long) volumeTradedForInstrumentExtractorMeta.get(RfqMetadataFieldNames.totalVolumeTradedForInstrumentPastYear);
         assertEquals((Long) volume,(Long) 20300000L);
     }
 
