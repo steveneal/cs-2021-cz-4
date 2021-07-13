@@ -16,7 +16,7 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.Map;
 
-import static org.junit.Assert.*; 
+import static org.junit.Assert.*;
 
 public class RfqProcessorTest {
 
