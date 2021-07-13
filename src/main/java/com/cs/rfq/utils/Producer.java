@@ -16,11 +16,12 @@ public class Producer {
     final KafkaProducer<String, String> mProducer;
     final Logger mLogger = LoggerFactory.getLogger(Producer.class);
 
-    Producer(String bootstrapServer){
+    public Producer(String bootstrapServer){
         Properties props = producerProps(bootstrapServer);
         mProducer = new KafkaProducer<>(props);
         mLogger.info("Producer On");
     }
+
     public static void main(String[] args) throws ExecutionException, InterruptedException {
         String server = "127.0.0.1:9092";
         String topic = "topicName";
